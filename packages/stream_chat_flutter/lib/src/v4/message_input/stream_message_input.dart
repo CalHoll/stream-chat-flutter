@@ -110,6 +110,10 @@ enum DefaultAttachmentTypes {
   /// Image Attachment
   image,
 
+  /// Image from Camera Attachment
+  camera,
+
+
   /// Video Attachment
   video,
 
@@ -215,6 +219,11 @@ class StreamMessageInput extends StatefulWidget {
         this.disableEmojiSuggestionsOverlay = false,
     this.enableEmojiSuggestionsOverlay = true,
     this.enableMentionsOverlay = true,
+    this.attachmentTypes = const [
+      DefaultAttachmentTypes.image,
+      DefaultAttachmentTypes.file,
+      DefaultAttachmentTypes.video,
+    ],
   });
 
   /// List of options for showing overlays.
@@ -347,6 +356,10 @@ class StreamMessageInput extends StatefulWidget {
   /// Disable the mentions overlay by passing false
   /// Enabled by default
   final bool enableMentionsOverlay;
+
+  /// Only allow certain file types to be shared
+  /// All except for camera enabled by default
+  final List<DefaultAttachmentTypes> attachmentTypes;
 
   static bool _defaultValidator(Message message) =>
       message.text?.isNotEmpty == true || message.attachments.isNotEmpty;
@@ -1510,30 +1523,42 @@ class StreamMessageInputState extends State<StreamMessageInput>
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.image),
-              title: Text(context.translations.uploadAPhotoLabel),
-              onTap: () {
-                pickFile(DefaultAttachmentTypes.image);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.video_library),
-              title: Text(context.translations.uploadAVideoLabel),
-              onTap: () {
-                pickFile(DefaultAttachmentTypes.video);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.insert_drive_file),
-              title: Text(context.translations.uploadAFileLabel),
-              onTap: () {
-                pickFile(DefaultAttachmentTypes.file);
-                Navigator.pop(context);
-              },
-            ),
+            if (widget.attachmentTypes.contains(DefaultAttachmentTypes.image))
+              ListTile(
+                leading: const Icon(Icons.image),
+                title: Text(context.translations.uploadAPhotoLabel),
+                onTap: () {
+                  pickFile(DefaultAttachmentTypes.image);
+                  Navigator.pop(context);
+                },
+              ),
+            if (widget.attachmentTypes.contains(DefaultAttachmentTypes.camera))
+              ListTile(
+                leading: const Icon(Icons.camera),
+                title: Text(context.translations.photoFromCameraLabel),
+                onTap: () {
+                  pickFile(DefaultAttachmentTypes.image);
+                  Navigator.pop(context);
+                },
+              ),
+            if (widget.attachmentTypes.contains(DefaultAttachmentTypes.video))
+              ListTile(
+                leading: const Icon(Icons.video_library),
+                title: Text(context.translations.uploadAVideoLabel),
+                onTap: () {
+                  pickFile(DefaultAttachmentTypes.video);
+                  Navigator.pop(context);
+                },
+              ),
+            if (widget.attachmentTypes.contains(DefaultAttachmentTypes.file))
+              ListTile(
+                leading: const Icon(Icons.insert_drive_file),
+                title: Text(context.translations.uploadAFileLabel),
+                onTap: () {
+                  pickFile(DefaultAttachmentTypes.file);
+                  Navigator.pop(context);
+                },
+              ),
           ],
         ),
       );
